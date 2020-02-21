@@ -1,6 +1,6 @@
 package chart;
 
-import handler.DateFormatter;
+import helper.DataSort;
 import model.Participant;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -58,59 +57,41 @@ public class ChartDrawer
             getChartData(sortByDate(participant.getDayOfYear()), participant.getName())));
 
         result.add(ChartFactory.createBarChart("MESSAGES EVERY DAY OF WEEK", "", "",
-            getChartData(getMessagePerDayOfWeek(participant.getDayOfWeek()), participant.getName())));
+            getChartData(sortByDayOfWeek(participant.getDayOfWeek()), participant.getName())));
 
-        //TODO:
-        //        data.setTitle("MESSAGES AVERAGE PER YEAR");
-        //        data.setTitle("MESSAGES AVERAGE PER MONTH");
-        //        data.setTitle("MESSAGES AVERAGE PER DAY");
-        //        data.setTitle("MESSAGES AVERAGE PER HOUR");
-        //        data.setTitle("MESSAGES AVERAGE PER MINUTE");
-        //        data.setTitle("MESSAGES AVERAGE PER SECOND");
+        Map<String, ? extends Number> averageMessages =
+            Map.of("year", participant.getAveragePerYear(), "month",
+                participant.getAveragePerMonth(), "day", participant.getAveragePerDay(), "hour",
+                participant.getAveragePerHour(), "minute", participant.getAveragePerMinute(),
+                "second", participant.getAveragePerSecond());
+
+        result.add(ChartFactory.createBarChart("MESSAGES AVERAGE", "", "",
+            getChartData(averageMessages, participant.getName())));
 
         return result;
     }
 
-    private DefaultCategoryDataset getChartData(Map<String, Integer> data, String title)
+    private DefaultCategoryDataset getChartData(Map<String, ? extends Number> data, String title)
     {
         DefaultCategoryDataset result = new DefaultCategoryDataset();
-        for (String key : data.keySet())
+        for (Map.Entry<String, ? extends Number> entry : data.entrySet())
         {
-            result.setValue(data.get(key), title, key);
+            result.setValue(entry.getValue(), title, entry.getKey());
         }
         return result;
     }
 
     private Map<String, Integer> sortByDate(Map<String, Integer> target)
     {
-        DateFormatter df = new DateFormatter();
-        Map<String, Integer> result = new TreeMap<>((o1, o2) ->
-        {
-            if (df.extractDate(o1).before(df.extractDate(o2)))
-            {
-                return -1;
-            } else if (df.extractDate(o1).after(df.extractDate(o2)))
-            {
-                return +1;
-            } else
-            {
-                return 0;
-            }
-        });
+        Map<String, Integer> result = new TreeMap<>(new DataSort().sortByDate());
         result.putAll(target);
         return result;
     }
 
-    private Map<String, Integer> getMessagePerDayOfWeek(Map<String, Integer> messageProDayOfWeek)
+    private Map<String, Integer> sortByDayOfWeek(Map<String, Integer> target)
     {
-        final String[] weekDays = new String[] {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
-        Map<String, Integer> result = new HashMap<>();
-
-        for (String weekDay : weekDays)
-        {
-            result.put(weekDay, messageProDayOfWeek.get(weekDay));
-        }
-
+        Map<String, Integer> result = new TreeMap<>(new DataSort().sortByDayOfWeek());
+        result.putAll(target);
         return result;
     }
 

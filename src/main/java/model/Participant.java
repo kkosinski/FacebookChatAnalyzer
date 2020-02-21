@@ -17,10 +17,10 @@ public class Participant
     private Map<String, Integer> monthOfYear;
     private Map<String, Integer> dayOfYear;
     private Map<String, Integer> dayOfWeek;
-    private Integer everyYearAverage;
-    private Integer everyMonthAverage;
-    private Integer everyDayAverage;
-    private Float everyHourAverage;
-    private Float everyMinuteAverage;
-    private Float everySecondAverage;
+    private Integer averagePerYear;
+    private Integer AveragePerMonth;
+    private Integer averagePerDay;
+    private Float averagePerHour;
+    private Float averagePerMinute;
+    private Float averagePerSecond;
 }

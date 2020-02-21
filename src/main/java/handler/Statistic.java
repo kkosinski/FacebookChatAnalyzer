@@ -1,7 +1,6 @@
 package handler;
 
 import chart.ChartDrawer;
-import helper.DataSort;
 import model.Message;
 import model.Participant;
 import model.TimePeriod;
@@ -12,8 +11,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 /**
  * Provides statistics for messaging for every chat participant.
@@ -66,17 +63,16 @@ public class Statistic
     public void createParticipantStatistic()
     {
         ChartDrawer dataChart = new ChartDrawer();
-        final DataSort dataSort = new DataSort();
-        SortedMap<String, Integer> dayOfYear;
-        SortedMap<String, Integer> monthOfYear;
-        SortedMap<String, Integer> dayOfWeek;
+        Map<String, Integer> dayOfYear;
+        Map<String, Integer> monthOfYear;
+        Map<String, Integer> dayOfWeek;
 
         for (Participant participant : participants)
         {
             List<Message> messages = participant.getMessages();
-            dayOfYear = new TreeMap<>(dataSort.sortByDate());
-            monthOfYear = new TreeMap<>(dataSort.sortByDayOfWeek());
-            dayOfWeek = new TreeMap<>(dataSort.sortByDate());
+            dayOfYear = new HashMap<>();
+            monthOfYear = new HashMap<>();
+            dayOfWeek = new HashMap<>();
             mostOftenUsedLetter = new HashMap<>();
             for (Message msg : messages)
             {
@@ -110,6 +106,7 @@ public class Statistic
         }
     }
 
+
     private void mostOftenUsedChar(String content)
     {
         int maxOccurring = 0;
@@ -128,11 +125,11 @@ public class Statistic
 
     private void calculateAverageStatistics(Participant participant, int messagesSum)
     {
-        participant.setEveryYearAverage(messagesSum / (int) timePeriod.getTotalYearsCount());
-        participant.setEveryMonthAverage(messagesSum / (int) timePeriod.getTotalMonthsCount());
-        participant.setEveryDayAverage(messagesSum / (int) timePeriod.getTotalDaysCount());
-        participant.setEveryHourAverage(messagesSum / Float.valueOf(timePeriod.getTotalHoursCount()));
-        participant.setEveryMinuteAverage(messagesSum / Float.valueOf(timePeriod.getTotalMinutesCount()));
-        participant.setEverySecondAverage(messagesSum / Float.valueOf(timePeriod.getTotalSecondsCount()));
+        participant.setAveragePerYear(messagesSum / (int) timePeriod.getTotalYearsCount());
+        participant.setAveragePerMonth(messagesSum / (int) timePeriod.getTotalMonthsCount());
+        participant.setAveragePerDay(messagesSum / (int) timePeriod.getTotalDaysCount());
+        participant.setAveragePerHour(messagesSum / Float.valueOf(timePeriod.getTotalHoursCount()));
+        participant.setAveragePerMinute(messagesSum / Float.valueOf(timePeriod.getTotalMinutesCount()));
+        participant.setAveragePerSecond(messagesSum / Float.valueOf(timePeriod.getTotalSecondsCount()));
     }
 }
