@@ -51,6 +51,11 @@ public class DateFormatter
         return month;
     }
 
+    public String extractDayOfWeek(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
+        return sdf.format(date);
+    }
+
     /**
      * @param date parts as string to extract a date of it (example: Jun 2019 -> Thu 01 06 00:00:00 2019)
      * @return
@@ -60,14 +65,14 @@ public class DateFormatter
         int day = 0, month, year;
         String[] datePart = date.split(" ");
 
-        month = Integer.valueOf(extractMonth(datePart[0])) - 1;
+        month = Integer.parseInt(extractMonth(datePart[0])) - 1;
         if (datePart.length == 3)
         {
-            day = Integer.valueOf(datePart[1]);
-            year = Integer.valueOf(datePart[2]);
+            day = Integer.parseInt(datePart[1]);
+            year = Integer.parseInt(datePart[2]);
         } else
         {
-            year = Integer.valueOf(datePart[1]);
+            year = Integer.parseInt(datePart[1]);
         }
 
         Calendar calendar = Calendar.getInstance();

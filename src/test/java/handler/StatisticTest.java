@@ -2,10 +2,8 @@ package handler;
 
 import model.Participant;
 import org.junit.Test;
-import parser.HtmlChatParser;
 import parser.JsonChatParser;
 
-import java.text.ParseException;
 import java.util.List;
 
 public class StatisticTest

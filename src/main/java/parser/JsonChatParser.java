@@ -98,6 +98,7 @@ public class JsonChatParser extends ChatParser
         {
             e.printStackTrace();
         }
+
         String[] raw = new Date(Objects.requireNonNull(ts).getTime()).toString().split(" ");
         String month = raw[1];
         String day = raw[2];

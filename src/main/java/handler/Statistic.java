@@ -1,6 +1,7 @@
 package handler;
 
 import chart.ChartDrawer;
+import helper.DataSort;
 import model.Message;
 import model.Participant;
 import model.TimePeriod;
@@ -11,6 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Provides statistics for messaging for every chat participant.
@@ -63,23 +66,23 @@ public class Statistic
     public void createParticipantStatistic()
     {
         ChartDrawer dataChart = new ChartDrawer();
-        Map<String, Integer> dayOfYear;
-        Map<String, Integer> monthOfYear;
-        Map<String, Integer> dayOfWeek;
+        final DataSort dataSort = new DataSort();
+        SortedMap<String, Integer> dayOfYear;
+        SortedMap<String, Integer> monthOfYear;
+        SortedMap<String, Integer> dayOfWeek;
 
         for (Participant participant : participants)
         {
             List<Message> messages = participant.getMessages();
-            dayOfYear = new HashMap<>();
-            monthOfYear = new HashMap<>();
-            dayOfWeek = new HashMap<>();
+            dayOfYear = new TreeMap<>(dataSort.sortByDate());
+            monthOfYear = new TreeMap<>(dataSort.sortByDayOfWeek());
+            dayOfWeek = new TreeMap<>(dataSort.sortByDate());
             mostOftenUsedLetter = new HashMap<>();
             for (Message msg : messages)
             {
                 try
                 {
                     String[] date = dateFormatter.parseDate(msg.getDate()).toString().split(" ");
-                    String weekDay = date[0];
                     String month = date[1];
                     String day = date[2];
                     String year = date[5];
@@ -87,7 +90,7 @@ public class Statistic
                     String period = month + " " + day + " " + year;
                     dayOfYear.merge(period, 1, Integer::sum);
 
-                    period = weekDay;
+                    period = dateFormatter.extractDayOfWeek(dateFormatter.extractDate(msg.getDate().replace(",", "")));
                     dayOfWeek.merge(period, 1, Integer::sum);
 
                     period = month + " " + year;
